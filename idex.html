@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(to right, #0c1b38, #3e5894);
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+    }
+
+    #chess-container {
+      padding: 20px;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      margin: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #f39c12;
+      margin-bottom: 20px;
+      cursor: default;
+    }
+
+    p {
+      max-width: 700px;
+      margin: 10px auto;
+      line-height: 1.5;
+      transition: background-color 0.3s;
+      padding: 10px;
+      border-radius: 5px;
+      color: #b1b1b1;
+      cursor: default;
+    }
+
+    span {
+      position: relative;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: bolder;
+      color: #ffffff;
+    }
+
+    span:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(to right, #c900ae, #025c99);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+
+    span:hover:after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    #chessboard {
+      display: grid;
+      grid-template-columns: repeat(8, 50px);
+      grid-template-rows: repeat(8, 50px);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      margin-top: 10px;
+      margin-right: 40px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .square {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .white {
+      background-color: #fff;
+    }
+
+    .black {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .light-blue {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .dark-blue {
+      background-color: #0056b3;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="chessboard"></div>
+
+  <div id="chess-container">
+    <h1>Chessboard Highlighter</h1>
+    <p style="padding-top: 20px;">
+      This web application allows you to explore a virtual chessboard and highlights squares based on the movement pattern of a <span>bishop.</span> It's a simple yet interactive demonstration of highlighting squares diagonally attacked by a bishop on a chessboard.
+    </p>
+    <p>
+      <span>The chessboard is dynamically created using HTML, CSS, and JavaScript,</span> with each square representing a potential position on the board. As you <span>hover</span> over a square, the application highlights the selected square and the diagonally attacked squares by changing their background colors.
+    </p>
+    <p>
+      The project utilizes <span>JavaScript to handle the interactivity,</span> making use of event listeners to detect mouseover events on each square. The code includes functions to highlight squares and reset the board colors, providing a visually engaging experience.
+    </p>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const chessboard = document.getElementById("chessboard");
+
+      function createChessboard() {
+        for (let row = 0; row < 8; row++) {
+          for (let col = 0; col < 8; col++) {
+            const square = document.createElement("div");
+            square.classList.add("square", (row + col) % 2 === 0 ? "white" : "black");
+            square.dataset.row = row;
+            square.dataset.col = col;
+
+            square.addEventListener("mouseover", highlightSquares);
+            square.addEventListener("mouseout", resetBoardColors);
+
+            chessboard.appendChild(square);
+          }
+        }
+      }
+
+      function highlightSquares(event) {
+        const selectedSquare = event.target;
+        const row = parseInt(selectedSquare.dataset.row);
+        const col = parseInt(selectedSquare.dataset.col);
+
+        resetBoardColors();
+
+        selectedSquare.classList.add("light-blue");
+
+        for (let i = 1; i < 8; i++) {
+          highlightSquare(row + i, col + i);
+          highlightSquare(row + i, col - i);
+          highlightSquare(row - i, col + i);
+          highlightSquare(row - i, col - i);
+        }
+      }
+
+      function highlightSquare(row, col) {
+        const square = document.querySelector(
+          `.square[data-row='${row}'][data-col='${col}']`
+        );
+        if (square) {
+          square.classList.add("dark-blue");
+        }
+      }
+
+      function resetBoardColors() {
+        const squares = document.querySelectorAll(".square");
+        squares.forEach((square) => {
+          square.classList.remove("light-blue", "dark-blue");
+        });
+      }
+
+      createChessboard();
+    });
+  </script>
+</body>
+</html>
